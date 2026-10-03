@@ -1,0 +1,19 @@
+# GNOME multi-monitor without invisible walls at screen edges.
+# Turns off every "push the mouse against the edge to reveal" feature;
+# the top bar and the dock show only in the Activities overview (Super key).
+#
+# Apply (takes effect immediately, no log-out):
+#   dconf load /org/gnome/ < barrier-free.dconf
+
+# Hide Top Bar extension: no pressure barrier on the top edge of the primary monitor
+[shell/extensions/hidetopbar]
+mouse-sensitive=false
+
+# Ubuntu Dock: never slides out on hover/pressure, no barrier on its screen edge
+[shell/extensions/dash-to-dock]
+autohide=false
+intellihide=false
+
+# Hot corner: no barrier at the top-left corner of the primary monitor (Ubuntu default, kept explicit)
+[desktop/interface]
+enable-hot-corners=false
