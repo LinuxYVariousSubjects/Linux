@@ -1,0 +1,26 @@
+[Unit]
+Description=Bidirectional sync of ~/OneDrive/Documents with OneDrive via rclone
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+# Pusty plik blokady (np. po zapełnionym dysku) rclone uznaje za wieczną blokadę -> usuń go.
+# Prawdziwa blokada zawsze zawiera JSON, więc pusty *.lck nigdy nie jest ważny.
+ExecStartPre=/bin/sh -c 'for f in %h/.cache/rclone/bisync/*.lck; do [ -f "$$f" ] && [ ! -s "$$f" ] && rm -f "$$f"; done; exit 0'
+# Konflikt: wygrywa wersja lokalna (edycja tylko na Linuksie), wersja z chmury zostaje jako *.conflictN.xlsx
+ExecStart=/usr/bin/rclone bisync onedrive:Documents %h/OneDrive/Documents \
+    --resilient \
+    --recover \
+    --conflict-resolve path2 \
+    --conflict-loser num \
+    --suffix-keep-extension \
+    --exclude ".~lock.*#" \
+    --max-lock 2m \
+    --log-file %h/.local/state/rclone-bisync.log \
+    --log-file-max-size 5M \
+    --log-file-max-backups 3 \
+    --log-level INFO
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
