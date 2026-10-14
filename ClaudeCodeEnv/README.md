@@ -45,6 +45,24 @@ The status line appears on the next prompt.
   `autoCompactWindow` in settings, otherwise 200k.
 - `CLAUDE_STATUSLINE_SETTINGS` points the script at a different settings file.
 
+## OneDrive sync on demand
+
+The `/onedrive-sync` skill (manual only) and the `onedrive-sync` terminal command run one pass of the
+`onedrive-bisync.service` systemd user unit, with the same flags, lock and log as the 5-minute timer.
+They then report the result: OK or failed, transferred files, and any `*.conflictN.*` copies. Messages are in Polish.
+
+Requires the rclone bisync setup from [onedrive-sync-lesson.md](../onedrive-sync-lesson.md).
+
+### Install
+
+```bash
+~/Linux/ClaudeCodeEnv/skills/onedrive-sync/install.sh
+```
+
+Links `~/.claude/skills/onedrive-sync` and `~/.local/bin/onedrive-sync` to this folder, so `git pull` keeps
+them up to date. An existing file there that is not a link is first moved to
+`~/.local/state/onedrive-sync-backup/<timestamp>/`. Keeping it out of `~/.claude/skills` stops it from loading as a second skill.
+
 ## Why plain files, not a plugin
 
 Claude Code plugins cannot set `statusLine` (plugin settings accept only `agent` and `subagentStatusLine`).
